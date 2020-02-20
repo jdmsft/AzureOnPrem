@@ -126,7 +126,11 @@
   "variables": {
     "vnetTemplateUri": "[uri(parameters('_artifactsLocation'), concat('Templates/virtualNetworkWithCustomDNS.json',parameters('_artifactsLocationSasToken')))]",
     "dcTemplateUri": "[uri(parameters('_artifactsLocation'), concat('Templates/vmWindowsPrivateStaticIP.json',parameters('_artifactsLocationSasToken')))]",
-    "forestTemplateUri": "[uri(parameters('_artifactsLocation'), concat('DSC/CreateADRootDC1.json',parameters('_artifactsLocationSasToken')))]"
+    "forestTemplateUri": "[uri(parameters('_artifactsLocation'), concat('DSC/CreateADRootDC1.json',parameters('_artifactsLocationSasToken')))]",
+
+    "dnsServers": [
+      "[parameters('RootDC1IPAddress')]"
+    ]
   },
   "resources": [
     {
@@ -147,7 +151,7 @@
             "value": "[parameters('virtualNetworkAddressRange')]"
           },
           "vnetDnsServers": {
-            "value": "[parameters('RootDC1IPAddress')]"
+            "value": "[variables('dnsServers')]"
           },
           "subnets": {
             "value": "[parameters('virtualNetworkSubnets')]"
