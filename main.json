@@ -1,0 +1,244 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "domainName": {
+      "type": "string",
+      "metadata": {
+        "description": "Full FQDN name for the forest root domain."
+      },
+      "defaultValue": "contoso.com",
+      "minLength": 4
+    },
+    "adminUsername": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the admin account for the Domain(s)"
+      }
+    },
+    "adminPassword": {
+      "type": "securestring",
+      "metadata": {
+        "description": "The (complex!) password for the Administrator account of the new VMs and Domain(s)"
+      },
+      "minLength": 8
+    },
+    "dcVmSize": {
+      "type": "string",
+      "allowedValues": [
+        "Standard_B2s",
+        "Standard_B2ms",
+        "Standard_B4ms",
+        "Standard_D1_v2",
+        "Standard_D2_v2",
+        "Standard_D3_v2",
+        "Standard_DS1_v2",
+        "Standard_DS2_v2",
+        "Standard_DS3_v2",
+        "Standard_D2s_v3"
+      ],
+      "metadata": {
+        "description": "The size and type of the VM. *_DS* or *s types support Premium Disks. Hint: the DS* series seem most reliable for this complex template."
+      },
+      "defaultValue": "Standard_D2s_v3"
+    },
+    "dcImageSku": {
+      "type": "string",
+      "defaultValue": "2019-Datacenter",
+      "allowedValues": [
+        "2016-Datacenter",
+        "2019-Datacenter"
+      ],
+      "metadata": {
+        "description": "Windows Server Version."
+      }
+    },
+    "virtualNetworkName": {
+      "type": "string",
+      "metadata": {
+        "description": "The name of the new VNET for the DC(s)."
+      },
+      "defaultValue": "MyVNET",
+      "minLength": 2,
+      "maxLength": 16
+    },
+    "virtualNetworkAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the new VNET in CIDR format."
+      },
+      "defaultValue": "10.92.99.0/24"
+    },
+    "virtualNetworkSubnets": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "DefaultSubnet",
+          "addressPrefix": "10.92.99.0/24"
+        }
+      ]
+    },
+    "externalDNSForwarder": {
+      "type": "string",
+      "metadata": {
+        "description": "DNS forwarder for all non-domain (external) related DNS queries."
+      },
+      "defaultValue": "168.63.129.16"
+    },
+    "RootDC1Name": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of the first DC of the root domain."
+      },
+      "defaultValue": "rootdc1",
+      "minLength": 2,
+      "maxLength": 15
+    },
+    "RootDC1IPAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP address of the first DC of the root domain."
+      },
+      "defaultValue": "10.0.0.4"
+    },
+    "location": {
+      "type": "string",
+      "defaultValue": "[resourceGroup().location]",
+      "metadata": {
+        "description": "Location for all resources; takes its default from the Resource Group."
+      }
+    },
+    "_artifactsLocation": {
+      "type": "string",
+      "metadata": {
+        "description": "The location of resources such as templates and DSC modules that the script depends on. No need to change unless you copy or fork this template."
+      },
+      "defaultValue": "https://raw.githubusercontent.com/jdmsft/AzureOnPrem/master/"
+    },
+    "_artifactsLocationSasToken": {
+      "type": "securestring",
+      "metadata": {
+        "description": "SAS storage token to access _artifactsLocation. No need to change unless you copy or fork this template."
+      },
+      "defaultValue": ""
+    }
+  },
+  "variables": {
+    "vnetTemplateUri": "[uri(parameters('_artifactsLocation'), concat('Templates/virtualNetworkWithCustomDNS.json',parameters('_artifactsLocationSasToken')))]",
+    "dcTemplateUri": "[uri(parameters('_artifactsLocation'), concat('Templates/vmWindowsPrivateStaticIP.json',parameters('_artifactsLocationSasToken')))]",
+    "forestTemplateUri": "[uri(parameters('_artifactsLocation'), concat('DSC/CreateADRootDC1.json',parameters('_artifactsLocationSasToken')))]"
+  },
+  "resources": [
+    {
+      "name": "VirtualNetwork",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-08-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('vnetTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vnetName": {
+            "value": "[parameters('virtualNetworkName')]"
+          },
+          "vnetAddressPrefix": {
+            "value": "[parameters('virtualNetworkAddressRange')]"
+          },
+          "vnetDnsServers": {
+            "value": "[parameters('RootDC1IPAddress')]"
+          },
+          "subnets": {
+            "value": "[parameters('virtualNetworkSubnets')]"
+          }
+        }
+      }
+    },
+    {
+      "name": "DomainController-VM",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-08-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('dcTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('RootDC1Name')]"
+          },
+          "vmSize": {
+            "value": "[parameters('dcVmSize')]"
+          },
+          "vmOs": {
+            "value": "[parameters('dcImageSku')]"
+          },
+          "vmVNetName": {
+            "value": "[parameters('virtualNetworkName')]"
+          },
+          "vmIpAddress": {
+            "value": "[parameters('RootDC1IPAddress')]"
+          },
+          "vmPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "[resourceId('Microsoft.Resources/deployments','VirtualNetwork')]"
+      ]
+    },
+    {
+      "name": "DomainController-Forest(DSC)",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-08-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('forestTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('RootDC1Name')]"
+          },
+          "location": {
+            "value": "[parameters('location')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "DNSForwarder": {
+            "value": "[parameters('externalDNSForwarder')]"
+          },
+          "_artifactsLocation": {
+            "value": "[parameters('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "Microsoft.Resources/deployments/DomainController-VM"
+      ]
+    }
+  ]
+}
