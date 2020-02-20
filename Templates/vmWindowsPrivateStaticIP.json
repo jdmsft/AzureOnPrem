@@ -65,7 +65,7 @@
         "diagStorageAccount": "[concat(variables('vmNameURIFormated'),'diag')]",
         "subscriptionName": "[subscription().displayName]",
 
-        "scriptName": "PrepareDSCandSwapFile.ps1",
+        "scriptName": "Prepare-DSCandSwapFile.ps1",
         "scriptDownLoad": "[uri(parameters('_artifactsLocation'), concat('Scripts\\',variables('scriptName'), parameters('_artifactsLocationSasToken')))]",
 
         "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File ./',variables('scriptName'),' -SkipNetworkProfileCheck $true')]"
