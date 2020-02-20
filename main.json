@@ -99,7 +99,7 @@
       "metadata": {
         "description": "The IP address of the first DC of the root domain."
       },
-      "defaultValue": "10.0.0.4"
+      "defaultValue": "10.92.99.4"
     },
     "location": {
       "type": "string",
