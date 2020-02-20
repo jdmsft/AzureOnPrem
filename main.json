@@ -163,7 +163,7 @@
         "mode": "Incremental",
         "templateLink": {
           "uri": "[variables('dcTemplateUri')]",
-          "contentVersion": "1.0.0.0"
+          "contentVersion": "1.3.0.0"
         },
         "parameters": {
           "vmName": {
