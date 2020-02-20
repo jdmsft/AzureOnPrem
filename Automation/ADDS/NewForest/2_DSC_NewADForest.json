@@ -29,7 +29,7 @@
     }
   },
   "variables": {
-    "adRootDC1ModulesURL": "[uri(parameters('_artifactsLocation'), concat('Automation/ADDS/NewForest/2_DSC_NewADForest.ps1.zip',parameters('_artifactsLocationSasToken')))]",
+    "adRootDC1ModulesURL": "[uri(parameters('_artifactsLocation'), concat('Automation\\ADDS\\NewForest\\2_DSC_NewADForest.ps1.zip',parameters('_artifactsLocationSasToken')))]",
     "adRootDC1ConfigurationFunction": "2_DSC_NewADForest.ps1\\NewADForest"
   },
   "resources": [
