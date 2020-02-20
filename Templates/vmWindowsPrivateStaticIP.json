@@ -59,7 +59,7 @@
         "location": "[resourceGroup().Location]",
         "vmVNetId": "[resourceId(parameters('vmVNetRGName'), 'Microsoft.Network/virtualNetworks', parameters('vmVNetName'))]",
         "vmVNetSubnetRef": "[concat(variables('vmVNetId'),'/subnets/', parameters('vmVNetSubnetName'))]",
-        "vmNICName": "[concat(parameters('vmName'),'NIC')]",
+        "vmNICName": "[concat(parameters('vmName'),'-NIC')]",
         "vmNameToLower": "[toLower(parameters('vmName'))]",
         "vmNameURIFormated": "[replace(variables('vmNameToLower'),'-','')]",
         "diagStorageAccount": "[concat(variables('vmNameURIFormated'),'diag')]",
@@ -88,7 +88,7 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(parameters('vmName'),'-OSDisk')]",
+                        "name": "[concat(parameters('vmName'),'-OS')]",
                         "createOption": "FromImage",
                         "managedDisk": {
                             "storageAccountType": "Premium_LRS"
@@ -96,7 +96,7 @@
                     },
                     "dataDisks": [
                         {
-                            "name": "[concat(parameters('vmName'),'-DataDisk')]",
+                            "name": "[concat(parameters('vmName'),'-DATA')]",
                             "caching": "None",
                             "lun": 0,
                             "diskSizeGB": 256,

@@ -108,13 +108,6 @@
         "description": "Location for all resources; takes its default from the Resource Group."
       }
     },
-    "_artifactsLocation": {
-      "type": "string",
-      "metadata": {
-        "description": "The location of resources such as templates and DSC modules that the script depends on. No need to change unless you copy or fork this template."
-      },
-      "defaultValue": "https://raw.githubusercontent.com/jdmsft/AzureOnPrem/master/"
-    },
     "_artifactsLocationSasToken": {
       "type": "securestring",
       "metadata": {
@@ -124,9 +117,11 @@
     }
   },
   "variables": {
-    "vnetTemplateUri": "[uri(parameters('_artifactsLocation'), concat('Templates/virtualNetworkWithCustomDNS.json',parameters('_artifactsLocationSasToken')))]",
-    "dcTemplateUri": "[uri(parameters('_artifactsLocation'), concat('Templates/vmWindowsPrivateStaticIP.json',parameters('_artifactsLocationSasToken')))]",
-    "forestTemplateUri": "[uri(parameters('_artifactsLocation'), concat('Automation/ADDS/NewForest/2_DSC_NewADForest.json',parameters('_artifactsLocationSasToken')))]",
+    "_artifactsLocation": "https://raw.githubusercontent.com/jdmsft/AzureOnPrem/master/",
+
+    "vnetTemplateUri": "[uri(variables('_artifactsLocation'), concat('Templates/virtualNetworkWithCustomDNS.json',parameters('_artifactsLocationSasToken')))]",
+    "dcTemplateUri": "[uri(variables('_artifactsLocation'), concat('Templates/vmWindowsPrivateStaticIP.json',parameters('_artifactsLocationSasToken')))]",
+    "forestTemplateUri": "[uri(variables('_artifactsLocation'), concat('Automation/ADDS/NewForest/2_DSC_NewADForest.json',parameters('_artifactsLocationSasToken')))]",
 
     "dnsServers": [
       "[parameters('RootDC1IPAddress')]"
@@ -189,7 +184,7 @@
             "value": "[parameters('adminPassword')]"
           },
           "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
+            "value": "[variables('_artifactsLocation')]"
           },
           "_artifactsLocationSasToken": {
             "value": "[parameters('_artifactsLocationSasToken')]"
@@ -201,7 +196,7 @@
       ]
     },
     {
-      "name": "DomainController-Forest(DSC)",
+      "name": "DomainController-NewForest(DSC)",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2018-08-01",
       "properties": {
@@ -230,7 +225,7 @@
             "value": "[parameters('externalDNSForwarder')]"
           },
           "_artifactsLocation": {
-            "value": "[parameters('_artifactsLocation')]"
+            "value": "[variables('_artifactsLocation')]"
           },
           "_artifactsLocationSasToken": {
             "value": "[parameters('_artifactsLocationSasToken')]"
