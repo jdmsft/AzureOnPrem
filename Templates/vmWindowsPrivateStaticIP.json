@@ -192,7 +192,7 @@
                     }
                 ],
                 "dnsSettings": {
-                    "dnsServers": []
+                    "dnsServers": ["8.8.8.8","8.8.4.4"]
                 },
                 "enableIPForwarding": false
             },
