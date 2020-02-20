@@ -65,8 +65,8 @@
         "diagStorageAccount": "[concat(variables('vmNameURIFormated'),'diag')]",
         "subscriptionName": "[subscription().displayName]",
 
-        "scriptName": "Prepare-DSCandSwapFile.ps1",
-        "scriptDownLoad": "[uri(parameters('_artifactsLocation'), concat('Scripts\\',variables('scriptName'), parameters('_artifactsLocationSasToken')))]",
+        "scriptName": "1_Script_PrepareDSC.ps1",
+        "scriptDownLoad": "[uri(parameters('_artifactsLocation'), concat('Automation/ADDS/NewForest/',variables('scriptName'), parameters('_artifactsLocationSasToken')))]",
 
         "commandToExecute": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File ./',variables('scriptName'),' -SkipNetworkProfileCheck $true')]"
     },
@@ -88,13 +88,24 @@
                         "version": "latest"
                     },
                     "osDisk": {
-                        "name": "[concat(parameters('vmName'),'OS')]",
+                        "name": "[concat(parameters('vmName'),'OSDisk')]",
                         "createOption": "FromImage",
                         "managedDisk": {
                             "storageAccountType": "Premium_LRS"
                         }
                     },
-                    "dataDisks": []
+                    "dataDisks": [
+                        {
+                            "name": "[concat(parameters('vmName'),'-DataDisk')]",
+                            "caching": "None",
+                            "lun": 0,
+                            "diskSizeGB": 256,
+                            "createOption": "Empty",
+                            "managedDisk": {
+                                "storageAccountType": "Standard_LRS"
+                            }
+                        }
+                    ]
                 },
                 "osProfile": {
                     "computerName": "[parameters('vmName')]",
@@ -107,6 +118,7 @@
                     "secrets": [],
                     "adminPassword": "[parameters('vmPassword')]"
                 },
+                
                 "networkProfile": {
                     "networkInterfaces": [
                         {
@@ -125,7 +137,7 @@
                 {
                     "apiVersion": "2018-06-01",
                     "type": "Microsoft.Compute/virtualMachines/extensions",
-                    "name": "[concat(parameters('vmName'),'/vmDownloadScriptDSCModules')]",
+                    "name": "[concat(parameters('vmName'),'/PrepareDSC')]",
                     "location": "[variables('location')]",
                     "dependsOn": [
                         "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]"
