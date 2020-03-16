@@ -113,8 +113,8 @@
 
     "_artifactsLocation": "https://raw.githubusercontent.com/jdmsft/AzureOnPrem/master/",
 
-    "vnetTemplateUri": "[uri(variables('_artifactsLocation'), concat('Templates/virtualNetworkWithCustomDNS.json',parameters('_artifactsLocationSasToken')))]",
-    "dcTemplateUri": "[uri(variables('_artifactsLocation'), concat('Templates/vmWindowsPrivateStaticIP.json',parameters('_artifactsLocationSasToken')))]",
+    "vnetTemplateUri": "[uri(variables('_artifactsLocation'), concat('Templates/vnetCustomDNS.json',parameters('_artifactsLocationSasToken')))]",
+    "dcTemplateUri": "[uri(variables('_artifactsLocation'), concat('Templates/vmDC.json',parameters('_artifactsLocationSasToken')))]",
     "forestTemplateUri": "[uri(variables('_artifactsLocation'), concat('Automation/ADDS/NewForest/2_DSC_NewADForest.json',parameters('_artifactsLocationSasToken')))]",
 
     "dnsServers": [
