@@ -8,6 +8,13 @@ AD Forest deployment time : ~ 24 min
 ADDS : Standard_D2sv3
 HV : Standard_D4sv3
 
+# Notes
+
+1) Run main.json
+2) main.json deploy resources based on /Templates files
+3) nested template (DC VM) call /Automation/ADDS/NewForest/1_Script_PrepareDSC.ps1
+4) main.json call /Automation/ADDS/NewForest/2_DSC_NewADForest.json wich deploy 2_DSC_NewADForest.ps1 as VM extension
+
 # Sources 
 
 Project inspired to these projects : 

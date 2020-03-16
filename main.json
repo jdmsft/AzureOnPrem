@@ -2,13 +2,29 @@
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
   "parameters": {
-    "domainName": {
+    "virtualNetworkName": {
       "type": "string",
       "metadata": {
-        "description": "Full FQDN name for the forest root domain."
+        "description": "The name of the new VNET for the DC(s)."
       },
-      "defaultValue": "contoso.com",
-      "minLength": 4
+      "minLength": 2,
+      "maxLength": 16
+    },
+    "virtualNetworkAddressRange": {
+      "type": "string",
+      "metadata": {
+        "description": "The address range of the new VNET in CIDR format."
+      },
+      "defaultValue": "10.92.99.0/24"
+    },
+    "virtualNetworkSubnets": {
+      "type": "array",
+      "defaultValue": [
+        {
+          "name": "DefaultSubnet",
+          "addressPrefix": "10.92.99.0/24"
+        }
+      ]
     },
     "adminUsername": {
       "type": "string",
@@ -22,6 +38,14 @@
         "description": "The (complex!) password for the Administrator account of the new VMs and Domain(s)"
       },
       "minLength": 8
+    },
+    "dcDomainName": {
+      "type": "string",
+      "metadata": {
+        "description": "Full FQDN name for the forest root domain."
+      },
+      "defaultValue": "contoso.com",
+      "minLength": 4
     },
     "dcVmSize": {
       "type": "string",
@@ -53,39 +77,14 @@
         "description": "Windows Server Version."
       }
     },
-    "virtualNetworkName": {
-      "type": "string",
-      "metadata": {
-        "description": "The name of the new VNET for the DC(s)."
-      },
-      "defaultValue": "MyVNET",
-      "minLength": 2,
-      "maxLength": 16
-    },
-    "virtualNetworkAddressRange": {
-      "type": "string",
-      "metadata": {
-        "description": "The address range of the new VNET in CIDR format."
-      },
-      "defaultValue": "10.92.99.0/24"
-    },
-    "virtualNetworkSubnets": {
-      "type": "array",
-      "defaultValue": [
-        {
-          "name": "DefaultSubnet",
-          "addressPrefix": "10.92.99.0/24"
-        }
-      ]
-    },
-    "externalDNSForwarder": {
+    "dcDnsForwarder": {
       "type": "string",
       "metadata": {
         "description": "DNS forwarder for all non-domain (external) related DNS queries."
       },
       "defaultValue": "168.63.129.16"
     },
-    "RootDC1Name": {
+    "dcHostName": {
       "type": "string",
       "metadata": {
         "description": "The computer name of the first DC of the root domain."
@@ -94,19 +93,12 @@
       "minLength": 2,
       "maxLength": 15
     },
-    "RootDC1IPAddress": {
+    "dcIPAddress": {
       "type": "string",
       "metadata": {
         "description": "The IP address of the first DC of the root domain."
       },
       "defaultValue": "10.92.99.4"
-    },
-    "location": {
-      "type": "string",
-      "defaultValue": "[resourceGroup().location]",
-      "metadata": {
-        "description": "Location for all resources; takes its default from the Resource Group."
-      }
     },
     "_artifactsLocationSasToken": {
       "type": "securestring",
@@ -117,6 +109,8 @@
     }
   },
   "variables": {
+    "location": "[resourceGroup().location]",
+
     "_artifactsLocation": "https://raw.githubusercontent.com/jdmsft/AzureOnPrem/master/",
 
     "vnetTemplateUri": "[uri(variables('_artifactsLocation'), concat('Templates/virtualNetworkWithCustomDNS.json',parameters('_artifactsLocationSasToken')))]",
@@ -124,7 +118,7 @@
     "forestTemplateUri": "[uri(variables('_artifactsLocation'), concat('Automation/ADDS/NewForest/2_DSC_NewADForest.json',parameters('_artifactsLocationSasToken')))]",
 
     "dnsServers": [
-      "[parameters('RootDC1IPAddress')]"
+      "[parameters('dcIPAddress')]"
     ]
   },
   "resources": [
@@ -166,7 +160,7 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[parameters('RootDC1Name')]"
+            "value": "[parameters('dcHostName')]"
           },
           "vmSize": {
             "value": "[parameters('dcVmSize')]"
@@ -178,7 +172,7 @@
             "value": "[parameters('virtualNetworkName')]"
           },
           "vmIpAddress": {
-            "value": "[parameters('RootDC1IPAddress')]"
+            "value": "[parameters('dcIPAddress')]"
           },
           "vmPassword": {
             "value": "[parameters('adminPassword')]"
@@ -207,10 +201,10 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[parameters('RootDC1Name')]"
+            "value": "[parameters('dcHostName')]"
           },
           "location": {
-            "value": "[parameters('location')]"
+            "value": "[variables('location')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -219,10 +213,10 @@
             "value": "[parameters('adminPassword')]"
           },
           "domainName": {
-            "value": "[parameters('domainName')]"
+            "value": "[parameters('dcDomainName')]"
           },
           "DNSForwarder": {
-            "value": "[parameters('externalDNSForwarder')]"
+            "value": "[parameters('dcDnsForwarder')]"
           },
           "_artifactsLocation": {
             "value": "[variables('_artifactsLocation')]"
