@@ -228,7 +228,7 @@
           "apiVersion": "2017-12-01",
           "dependsOn": [
             "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', 'JoinDomain')]"
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'JoinDomain')]"
            ],
           "properties": {
             "publisher": "Microsoft.Compute",
@@ -250,7 +250,7 @@
           "apiVersion": "2017-12-01",
           "dependsOn": [
             "[resourceId('Microsoft.Compute/virtualMachines', parameters('vmName'))]",
-            "[resourceId('Microsoft.Compute/virtualMachines/extensions', 'InstallHyperV')]"
+            "[resourceId('Microsoft.Compute/virtualMachines/extensions', parameters('vmName'), 'InstallHyperV')]"
           ],
           "properties": {
             "publisher": "Microsoft.Powershell",
