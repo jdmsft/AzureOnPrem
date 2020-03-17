@@ -112,7 +112,7 @@
     "hypervIPAddress": {
       "type": "string",
       "metadata": {
-        "description": "The IP address of the first DC of the root domain."
+        "description": "The IP address of the hypervisor"
       },
       "defaultValue": "10.92.99.5"
     },
