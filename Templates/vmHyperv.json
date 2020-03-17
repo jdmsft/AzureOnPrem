@@ -89,7 +89,7 @@
     "scriptDownLoad": "[uri(parameters('_artifactsLocation'), concat('Automation/HyperV/',variables('scriptFile'), parameters('_artifactsLocationSasToken')))]",
     "scriptCommand": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File ./',variables('scriptFile'),' -SkipNetworkProfileCheck $true')]",
 
-    "dscFile": "2_Script_ConfigureHyperV.ps1",
+    "dscFile": "2_DSC_ConfigureHyperV.ps1",
     "dscDownload": "[uri(parameters('_artifactsLocation'), concat('Automation/HyperV/',variables('dscFile'),'.zip', parameters('_artifactsLocationSasToken')))]"
 
   },
