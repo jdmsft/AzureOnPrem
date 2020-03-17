@@ -39,7 +39,7 @@
       },
       "minLength": 8
     },
-    "dcDomainName": {
+    "domainName": {
       "type": "string",
       "metadata": {
         "description": "Full FQDN name for the forest root domain."
@@ -100,6 +100,22 @@
       },
       "defaultValue": "10.92.99.4"
     },
+    "hyperVHostName": {
+      "type": "string",
+      "metadata": {
+        "description": "The computer name of the first DC of the root domain."
+      },
+      "defaultValue": "hyperV",
+      "minLength": 2,
+      "maxLength": 15
+    },
+    "hyperVIPAddress": {
+      "type": "string",
+      "metadata": {
+        "description": "The IP address of the first DC of the root domain."
+      },
+      "defaultValue": "10.92.99.5"
+    },
     "_artifactsLocationSasToken": {
       "type": "securestring",
       "metadata": {
@@ -115,6 +131,7 @@
 
     "vnetTemplateUri": "[uri(variables('_artifactsLocation'), concat('Templates/vnetCustomDNS.json',parameters('_artifactsLocationSasToken')))]",
     "dcTemplateUri": "[uri(variables('_artifactsLocation'), concat('Templates/vmDC.json',parameters('_artifactsLocationSasToken')))]",
+    "hyperVTemplateUri": "[uri(variables('_artifactsLocation'), concat('Templates/vmHyperv.json',parameters('_artifactsLocationSasToken')))]",
     "forestTemplateUri": "[uri(variables('_artifactsLocation'), concat('Automation/ADDS/NewForest/2_DSC_NewADForest.json',parameters('_artifactsLocationSasToken')))]",
 
     "dnsServers": [
@@ -213,10 +230,54 @@
             "value": "[parameters('adminPassword')]"
           },
           "domainName": {
-            "value": "[parameters('dcDomainName')]"
+            "value": "[parameters('domainName')]"
           },
           "DNSForwarder": {
             "value": "[parameters('dcDnsForwarder')]"
+          },
+          "_artifactsLocation": {
+            "value": "[variables('_artifactsLocation')]"
+          },
+          "_artifactsLocationSasToken": {
+            "value": "[parameters('_artifactsLocationSasToken')]"
+          }
+        }
+      },
+      "dependsOn": [
+        "Microsoft.Resources/deployments/DomainController-VM"
+      ]
+    },
+    {
+      "name": "HyperV",
+      "type": "Microsoft.Resources/deployments",
+      "apiVersion": "2018-08-01",
+      "properties": {
+        "mode": "Incremental",
+        "templateLink": {
+          "uri": "[variables('hyperVTemplateUri')]",
+          "contentVersion": "1.0.0.0"
+        },
+        "parameters": {
+          "vmName": {
+            "value": "[parameters('hyperVHostName')]"
+          },
+          "location": {
+            "value": "[variables('location')]"
+          },
+          "adminUsername": {
+            "value": "[parameters('adminUsername')]"
+          },
+          "adminPassword": {
+            "value": "[parameters('adminPassword')]"
+          },
+          "domainName": {
+            "value": "[parameters('domainName')]"
+          },
+          "vmVNetRGName": {
+            "value": "[resourceGroup().Name]"
+          },
+          "vmVNetName": {
+            "value": "[parameters('virtualNetworkName')]"
           },
           "_artifactsLocation": {
             "value": "[variables('_artifactsLocation')]"

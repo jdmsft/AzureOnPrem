@@ -118,7 +118,6 @@
                     "secrets": [],
                     "adminPassword": "[parameters('vmPassword')]"
                 },
-                
                 "networkProfile": {
                     "networkInterfaces": [
                         {
