@@ -203,7 +203,7 @@
         {
             "apiVersion": "2015-06-15",
             "type": "Microsoft.Compute/virtualMachines/extensions",
-            "name": "[concat(parameters('vmName'),'/JoinDomain')]",
+            "name": "JoinDomain",
             "location": "[resourceGroup().location]",
             "properties": {
                 "publisher": "Microsoft.Compute",
@@ -222,7 +222,7 @@
             }
         },
         {  
-            "name": "[concat(parameters('vmName'),'/InstallHyperV')]",
+            "name": "InstallHyperV",
           "type": "extensions",
           "location": "[resourceGroup().location]",
           "apiVersion": "2017-12-01",
@@ -244,7 +244,7 @@
           }
         },
         {
-            "name": "[concat(parameters('vmName'),'/ConfigureHyperV')]",
+            "name": "ConfigureHyperV",
           "type": "extensions",
           "location": "[resourceGroup().location]",
           "apiVersion": "2017-12-01",
