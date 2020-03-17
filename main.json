@@ -261,9 +261,6 @@
           "vmName": {
             "value": "[parameters('hyperVHostName')]"
           },
-          "location": {
-            "value": "[variables('location')]"
-          },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
           },
