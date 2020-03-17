@@ -4,12 +4,12 @@ ___Azure OnPremises Environment Simulation___
 
 * OnPremises Virtual Network
 * OnPremises Domain Controller with new Active Directory forest
-* OnPremises domain-joined Hyper-V hypervisor
+* OnPremises domain-joined Hyper-V hypervisor (empty)
 
 <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjdmsft%2FAzureOnPrem%2Fmaster%2Fmain.json" target="_blank"><img src=".github/DeployToAzure.png" width="150" /></a>
 <a href="https://github.com/jdmsft/AzureOnPrem" target="_blank"><img src=".github/OpenInGithub.png" width="150" /></a> 
 
-_AD Forest deployment time : ~ 24 min_
+_Deployment time : ~ 30 min_
 
 # Configuration
 
