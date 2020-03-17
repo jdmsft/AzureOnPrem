@@ -90,7 +90,8 @@
     "scriptCommand": "[concat('powershell.exe -ExecutionPolicy Unrestricted -File ./',variables('scriptFile'),' -SkipNetworkProfileCheck $true')]",
 
     "dscFile": "2_DSC_ConfigureHyperV.ps1",
-    "dscDownload": "[uri(parameters('_artifactsLocation'), concat('Automation/HyperV/',variables('dscFile'),'.zip', parameters('_artifactsLocationSasToken')))]"
+    "dscDownload": "[uri(parameters('_artifactsLocation'), concat('Automation/HyperV/',variables('dscFile'),'.zip', parameters('_artifactsLocationSasToken')))]",
+    "dscConfiguration": "HyperV"
 
   },
   "resources": [
@@ -264,7 +265,7 @@
               "configuration": {
                 "url": "[variables('dscDownload')]",
                 "script": "[variables('dscFile')]",
-                "function": "Main"
+                "function": "[variables('dscConfiguration')]"
               },
               "configurationArguments": {
                 "nodeName": "[parameters('vmName')]"
