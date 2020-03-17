@@ -100,7 +100,7 @@
       },
       "defaultValue": "10.92.99.4"
     },
-    "hyperVHostName": {
+    "hypervHostName": {
       "type": "string",
       "metadata": {
         "description": "The computer name of the first DC of the root domain."
@@ -109,7 +109,7 @@
       "minLength": 2,
       "maxLength": 15
     },
-    "hyperVIPAddress": {
+    "hypervIPAddress": {
       "type": "string",
       "metadata": {
         "description": "The IP address of the first DC of the root domain."
@@ -259,7 +259,7 @@
         },
         "parameters": {
           "vmName": {
-            "value": "[parameters('hyperVHostName')]"
+            "value": "[parameters('hypervHostName')]"
           },
           "adminUsername": {
             "value": "[parameters('adminUsername')]"
@@ -275,6 +275,9 @@
           },
           "vmVNetName": {
             "value": "[parameters('virtualNetworkName')]"
+          },
+          "vmIpAddress": {
+            "value": "[parameters('hypervIPAddress')]"
           },
           "_artifactsLocation": {
             "value": "[variables('_artifactsLocation')]"
