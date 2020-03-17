@@ -1,7 +1,7 @@
 # AzureOnPrem
 
 
-<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjdmsft%2FAzureOnPrem%2Fmaster%2Fmain.json" target="_blank">![Button to deploy project to Azure.](.github/DeployToAzure.png "Deploy the project to Azure")</a>
+<a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fjdmsft%2FAzureOnPrem%2Fmaster%2Fmain.json" target="_blank"><img src=".github/DeployToAzure.png" width="150" /></a>
 
 AD Forest deployment time : ~ 24 min
 
