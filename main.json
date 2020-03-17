@@ -248,7 +248,7 @@
       ]
     },
     {
-      "name": "HyperV",
+      "name": "HyperV-VM",
       "type": "Microsoft.Resources/deployments",
       "apiVersion": "2018-08-01",
       "properties": {
@@ -288,7 +288,7 @@
         }
       },
       "dependsOn": [
-        "Microsoft.Resources/deployments/DomainController-VM"
+        "Microsoft.Resources/deployments/DomainController-NewForest(DSC)"
       ]
     }
   ]
